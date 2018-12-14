@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.CompanyMapper">
+    <insert id="addCompany" parameterType="org.sang.bean.Company">
+        insert into company (projectId, name,
+        address, description, type, createDate,
+        updateDate
+        )
+        values (#{projectId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+        #{address,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+        #{updateDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <!--<select id="getMaxWorkID" resultType="Long">-->
+        <!--SELECT workID from employee where id=(select max(id) from employee)-->
+    <!--</select>-->
+    <resultMap id="BaseResultMap" type="org.sang.bean.Company">
+        <id column="id" property="id"/>
+        <result column="projectId" property="projectId"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="description" property="description"/>
+        <result column="type" property="type"/>
+        <result column="createDate" property="createDate"/>
+        <result column="updateDate" property="updateDate"/>
+        <association property="companyType" javaType="org.sang.bean.CompanyType">
+            <id property="id" column="cid"/>
+            <result property="name" column="cname"/>
+        </association>
+    </resultMap>
+    <select id="getCompanysByPage" resultMap="BaseResultMap">
+        select c.* from
+        company c where c.enabled = true
+        <if test="start!=null and size!=null">
+            order by c.id limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getAllCompanys" resultMap="BaseResultMap">
+        select c.* from
+        company c where c.enabled = true order by c.id
+    </select>
+    <!--<select id="getCountByKeywords" resultType="Long">-->
+        <!--SELECT count(*) FROM employee e WHERE e.name LIKE concat('%',#{keywords},'%')-->
+        <!--<if test="engageForm!=null and engageForm!=''">-->
+            <!--AND e.engageForm=#{engageForm}-->
+        <!--</if>-->
+        <!--<if test="politicId!=null and politicId!=''">-->
+            <!--AND e.politicId=#{politicId}-->
+        <!--</if>-->
+        <!--<if test="nationId!=null and nationId!=''">-->
+            <!--AND e.nationId=#{nationId}-->
+        <!--</if>-->
+        <!--<if test="posId!=null and posId!=''">-->
+            <!--AND e.posId=#{posId}-->
+        <!--</if>-->
+        <!--<if test="jobLevelId!=null and jobLevelId!=''">-->
+            <!--AND e.jobLevelId=#{jobLevelId}-->
+        <!--</if>-->
+        <!--<if test="departmentId!=null and departmentId!=''">-->
+            <!--AND e.departmentId=#{departmentId}-->
+        <!--</if>-->
+        <!--<if test="startBeginDate!=null and endBeginDate!=null">-->
+            <!--AND e.beginDate BETWEEN #{startBeginDate} AND #{endBeginDate}-->
+        <!--</if>-->
+    <!--</select>-->
+    <update id="updateCompany">
+        update company
+        <set>
+            <if test="company.name != null">
+                name = #{company.name,jdbcType=VARCHAR},
+            </if>
+            <if test="company.type != null">
+                type = #{company.type,jdbcType=INTEGER},
+            </if>
+            <if test="company.address != null">
+                address = #{company.address,jdbcType=VARCHAR},
+            </if>
+            <if test="company.description != null">
+                description = #{company.description,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{company.id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteCompanyById">
+        DELETE FROM company WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+    <!--<insert id="addEmps">-->
+        <!--insert into employee (name, gender,-->
+        <!--birthday, idCard, wedlock, nationId,-->
+        <!--nativePlace, politicId, email,-->
+        <!--phone, address, departmentId,-->
+        <!--jobLevelId, posId, engageForm,-->
+        <!--tiptopDegree, specialty, school,-->
+        <!--beginDate,workID,-->
+        <!--contractTerm, conversionTime,-->
+        <!--beginContract, endContract, workAge-->
+        <!--)-->
+        <!--values-->
+        <!--<foreach collection="emps" item="emp" separator=",">-->
+            <!--(#{emp.name,jdbcType=VARCHAR}, #{emp.gender,jdbcType=CHAR},-->
+            <!--#{emp.birthday,jdbcType=DATE}, #{emp.idCard,jdbcType=CHAR}, #{emp.wedlock,jdbcType=CHAR},-->
+            <!--#{emp.nationId,jdbcType=BIGINT},-->
+            <!--#{emp.nativePlace,jdbcType=VARCHAR}, #{emp.politicId,jdbcType=BIGINT}, #{emp.email,jdbcType=VARCHAR},-->
+            <!--#{emp.phone,jdbcType=VARCHAR}, #{emp.address,jdbcType=VARCHAR}, #{emp.departmentId,jdbcType=BIGINT},-->
+            <!--#{emp.jobLevelId,jdbcType=BIGINT}, #{emp.posId,jdbcType=BIGINT}, #{emp.engageForm,jdbcType=VARCHAR},-->
+            <!--#{emp.tiptopDegree,jdbcType=VARCHAR}, #{emp.specialty,jdbcType=VARCHAR}, #{emp.school,jdbcType=VARCHAR},-->
+            <!--#{emp.beginDate,jdbcType=DATE},#{emp.workID,jdbcType=BIGINT},-->
+            <!--#{emp.contractTerm,jdbcType=BIGINT}, #{emp.conversionTime,jdbcType=DATE},-->
+            <!--#{emp.beginContract,jdbcType=DATE}, #{emp.endContract,jdbcType=DATE}, #{emp.workAge,jdbcType=INTEGER}-->
+            <!--)-->
+        <!--</foreach>-->
+    <!--</insert>-->
+    <!--<select id="getEmployeeByPageShort" resultMap="BaseResultMap">-->
+        <!--select e.*,d.`id` as did,d.`name` as dname,s.`id` as sid,s.`accumulationFundBase`,s.`accumulationFundPer`,s.`allSalary`,s.`basicSalary`,s.`bonus`,s.`createDate`,s.`lunchSalary`,s.`medicalBase`,s.`medicalPer`,s.`name` as sname,s.`pensionBase`,s.`pensionPer`,s.`trafficSalary` from employee e left join department d on e.`departmentId`=d.id left join empsalary es on es.`eid`=e.`id` left join salary s on s.`id`=es.`sid` ORDER BY e.id limit #{start},#{size}-->
+    <!--</select>-->
+</mapper>

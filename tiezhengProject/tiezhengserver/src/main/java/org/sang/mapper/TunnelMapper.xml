@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.TunnelMapper">
+    <select id="getTunnelsPage" resultType="org.sang.bean.Tunnel">
+        select t.* from
+        tunnel t where t.enabled = true
+        <if test="start!=null and size!=null">
+            order by t.id limit #{start},#{size}
+        </if>
+    </select>
+    <insert id="addTunnel" parameterType="org.sang.bean.Tunnel">
+            insert into tunnel (bidId, name,
+      address, km, geology,supportType,parameter,excavationWay,createDate,updateDate
+      )
+    values (#{bidId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+      #{address,jdbcType=VARCHAR}, #{km,jdbcType=VARCHAR}, #{geology,jdbcType=VARCHAR},#{supportType,jdbcType=VARCHAR},
+      #{parameter,jdbcType=VARCHAR},#{excavationWay,jdbcType=VARCHAR},#{createDate,jdbcType=DATE},#{updateDate,jdbcType=DATE}
+      )
+    </insert>
+    <update id="updateTunnel">
+        update tunnel
+        <set>
+            <if test="tunnel.bidId != null">
+                bidId = #{tunnel.bidId,jdbcType=INTEGER},
+            </if>
+            <if test="tunnel.name != null">
+                name = #{tunnel.name,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.address != null">
+                address = #{tunnel.address,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.km != null">
+                km = #{tunnel.km,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.geology != null">
+                geology = #{tunnel.geology,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.supportType != null">
+                supportType = #{tunnel.supportType,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.parameter != null">
+                parameter = #{tunnel.parameter,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.excavationWay != null">
+                excavationWay = #{tunnel.excavationWay,jdbcType=VARCHAR},
+            </if>
+            <if test="tunnel.createDate != null">
+                createDate = #{tunnel.createDate,jdbcType=DATE},
+            </if>
+            <if test="tunnel.updateDate != null">
+                updateDate = #{tunnel.updateDate,jdbcType=DATE},
+            </if>
+        </set>
+        where id = #{tunnel.id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteTunnelById">
+        DELETE FROM tunnel WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

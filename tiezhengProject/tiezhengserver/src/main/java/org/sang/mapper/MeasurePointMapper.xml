@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.MeasurePointMapper">
+    <select id="getMeasurePointsByPage" resultType="org.sang.bean.MeasurePoint">
+        select m.* from
+        measurepoint m where m.enabled = true
+        <if test="start!=null and size!=null">
+            order by m.id limit #{start},#{size}
+        </if>
+    </select>
+    <insert id="addMeasurePoint" parameterType="org.sang.bean.MeasurePoint">
+            insert into measurepoint (
+              sectionId, tunnelId,measPointNoFormat, measPointNum,
+              embLocation, embTime,equipment, equiNo,
+              basedOnCriteria, envConditions,maxDisplacement, XMaxDisplacement,
+              YMaxDisplacement, ZMaxDisplacement,sinkSpeed, modValue,
+              baseDistance, detectionMan,setIdentity
+            )
+    values (
+            #{sectionId,jdbcType=INTEGER}, #{tunnelId,jdbcType=INTEGER},#{measPointNoFormat,jdbcType=VARCHAR}, #{measPointNum,jdbcType=INTEGER},
+            #{embLocation,jdbcType=VARCHAR}, #{embTime,jdbcType=DATE},#{equipment,jdbcType=VARCHAR}, #{equiNo,jdbcType=VARCHAR},
+            #{basedOnCriteria,jdbcType=VARCHAR}, #{envConditions,jdbcType=VARCHAR},#{maxDisplacement,jdbcType=VARCHAR}, #{XMaxDisplacement,jdbcType=VARCHAR},
+            #{YMaxDisplacement,jdbcType=VARCHAR}, #{ZMaxDisplacement,jdbcType=VARCHAR},#{sinkSpeed,jdbcType=VARCHAR}, #{modValue,jdbcType=VARCHAR},
+            #{baseDistance,jdbcType=VARCHAR}, #{detectionMan,jdbcType=VARCHAR},#{setIdentity,jdbcType=VARCHAR}
+            )
+    </insert>
+    <update id="updateMeasurePoint">
+        update measurepoint
+        <set>
+            <if test="measurePoint.sectionId != null">
+                sectionId = #{measurePoint.sectionId,jdbcType=INTEGER},
+            </if>
+            <if test="measurePoint.tunnelId != null">
+                tunnelId = #{measurePoint.tunnelId,jdbcType=INTEGER},
+            </if>
+            <if test="measurePoint.measPointNoFormat != null">
+                measPointNoFormat = #{measurePoint.measPointNoFormat,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.measPointNum != null">
+                measPointNum = #{measurePoint.measPointNum,jdbcType=INTEGER},
+            </if>
+            <if test="measurePoint.embTime != null">
+                embTime = #{measurePoint.embTime,jdbcType=DATE},
+            </if>
+            <if test="measurePoint.equipment != null">
+                equipment = #{measurePoint.equipment,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.equiNo != null">
+                equiNo = #{measurePoint.equiNo,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.basedOnCriteria != null">
+                basedOnCriteria = #{measurePoint.basedOnCriteria,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.envConditions != null">
+                envConditions = #{measurePoint.envConditions,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.maxDisplacement != null">
+                maxDisplacement = #{measurePoint.maxDisplacement,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.XMaxDisplacement != null">
+                XMaxDisplacement = #{measurePoint.XMaxDisplacement,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.YMaxDisplacement != null">
+                YMaxDisplacement = #{measurePoint.YMaxDisplacement,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.ZMaxDisplacement != null">
+                ZMaxDisplacement = #{measurePoint.ZMaxDisplacement,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.sinkSpeed != null">
+                sinkSpeed = #{measurePoint.sinkSpeed,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.modValue != null">
+                modValue = #{measurePoint.modValue,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.baseDistance != null">
+                baseDistance = #{measurePoint.baseDistance,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.detectionMan != null">
+                detectionMan = #{measurePoint.detectionMan,jdbcType=VARCHAR},
+            </if>
+            <if test="measurePoint.setIdentity != null">
+                setIdentity = #{measurePoint.setIdentity,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{measurePoint.id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteMeasurePointById">
+        DELETE FROM measurepoint WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

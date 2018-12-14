@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.DictMapper">
+    <resultMap id="BaseResultMap" type="org.sang.bean.Dict">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="parentId" property="parentId" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="createDate" property="createDate" jdbcType="DATE"/>
+        <result column="updateDate" property="updateDate" jdbcType="DATE"/>
+        <!--<collection property="children" ofType="org.sang.bean.Dict" select="org.sang.mapper.DictMapper.getDictByPid" column="id">-->
+            <!--<id column="id2" property="id2" jdbcType="INTEGER"/>-->
+            <!--<result column="name" property="name" jdbcType="VARCHAR"/>-->
+        <!--</collection>-->
+    </resultMap>
+    <select id="getDictsPage" resultMap="BaseResultMap">
+        select d.* from
+        dict d where d.enabled = true
+        <if test="start!=null and size!=null">
+            order by d.id limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getDictByPid" resultType="org.sang.bean.Dict">
+        select d1.*from dict d1 where d1.`id`=#{pid} AND d1.enabled=true;
+    </select>
+    <select id="getParentDicts" resultType="org.sang.bean.Dict">
+        select d.*  from
+        dict d where d.enabled = true AND parentId is null order by d.id
+    </select>
+    <insert id="addDict" parameterType="org.sang.bean.Dict">
+            insert into dict (name, code,parentId,description,createDate,updateDate)
+              values ( #{name,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},#{parentId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}
+                ,#{createDate,jdbcType=DATE}, #{updateDate,jdbcType=DATE}
+              )
+    </insert>
+    <update id="updateDict">
+        update dict
+        <set>
+            <if test="dict.name != null">
+                name = #{dict.name,jdbcType=VARCHAR},
+            </if>
+            <if test="dict.code != null">
+                code = #{dict.code,jdbcType=VARCHAR},
+            </if>
+            <if test="dict.parentId != null">
+                parentId = #{dict.parentId,jdbcType=INTEGER},
+            </if>
+            <if test="dict.updateDate != null">
+                updateDate = #{dict.updateDate,jdbcType=DATE},
+            </if>
+            <if test="dict.description != null">
+                description = #{dict.description,jdbcType=DATE}
+            </if>
+        </set>
+        where id = #{dict.id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteDictById">
+        DELETE FROM dict WHERE id IN
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
